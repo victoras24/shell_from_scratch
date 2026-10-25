@@ -33,6 +33,11 @@ int main(int argc, char *argv[])
         printf("%s is a shell builtin\n", input + 5);
         continue;
       }
+      else
+      {
+        printf("%s: command not found\n", input + 5);
+        continue;
+      }
     }
 
     if (strncmp(input, "echo ", 5) == 0)
@@ -43,6 +48,7 @@ int main(int argc, char *argv[])
 
     if (strcmp(input, "exit") == 0)
       return 0;
+
     printf("%s: command not found\n", input);
   }
 }
