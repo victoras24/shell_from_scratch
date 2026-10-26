@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "main.h"
 
 const char *build_in_commands[] = {"echo", "exit", "type"};
 
@@ -20,11 +21,11 @@ int main(int argc, char *argv[])
 
   while (1)
   {
-    char input[1024];
+    char input[1024]; // this could be created at the preprossor
     printf("$ ");
-    char *input_position = fgets(input, sizeof(input), stdin);
+    char *input_str = fgets(input, sizeof(input), stdin);
     input[strcspn(input, "\n")] = '\0';
-    if (input_position == NULL)
+    if (input_str == NULL)
       return 0;
     if (strncmp(input, "type ", 5) == 0)
     {
