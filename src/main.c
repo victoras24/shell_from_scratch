@@ -2,12 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include "main.h"
-
-const char *build_in_commands[] = {"echo", "exit", "type"};
+#define GEN(name) #name,
+const char *build_in_commands[] = {LIST_OF_COMMANDS};
+#undef GEN
 
 int is_buildin_command(char *input)
 {
-  for (size_t i = 0; i < (sizeof(build_in_commands) / sizeof(build_in_commands[0])); i++)
+  for (size_t i = 0; i < cmd_count; i++)
   {
     if (strcmp(build_in_commands[i], input) == 0)
       return 1;

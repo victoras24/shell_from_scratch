@@ -2,15 +2,15 @@
 #define MAIN_H
 
 #define LIST_OF_COMMANDS \
-  GEN(ECHO)              \
-  GEN(EXIT)              \
-  GEN(TYPE)
+  GEN(echo)              \
+  GEN(exit)              \
+  GEN(type)
 
-#define GEN(name) CMD_##name,
+#define GEN(name) cmd_##name,
 
 enum commands
 {
-  LIST_OF_COMMANDS
+  LIST_OF_COMMANDS cmd_count
 };
 
 #undef GEN
