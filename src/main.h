@@ -1,16 +1,17 @@
-struct commands
-{
-  char *buffer;
-  int count;
-};
+#ifndef MAIN_H
+#define MAIN_H
 
 #define LIST_OF_COMMANDS \
-  GEN(echo)              \
-  GEN(exit)              \
-  GEN(type)
+  GEN(ECHO)              \
+  GEN(EXIT)              \
+  GEN(TYPE)
 
-#define GEN(name) char *name;
+#define GEN(name) CMD_##name,
 
-LIST_OF_COMMANDS
+enum commands
+{
+  LIST_OF_COMMANDS
+};
 
 #undef GEN
+#endif // MAIN_H
