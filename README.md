@@ -42,3 +42,11 @@ You can check your work at any stage, looking at what the preprocessor produced.
 ```sh
 gcc -E file.c
 ```
+And we end up having an enum.
+```c
+enum fruit
+{
+  fruit_apple, fruit_banana, fruit_pear, fruit_count
+};
+```
+The best part is that we get a free count of the fruits. Enum values are numbers starting at 0, so if fruit_count is the last item, its value is exactly the number of fruits before it.
