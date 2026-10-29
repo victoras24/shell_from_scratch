@@ -16,6 +16,15 @@ char *parse_command(char *input)
   return input;
 };
 
+char *get_input(char *input)
+{
+  strtok(input, " ");
+  char *command = strtok(NULL, " ");
+  if (command != NULL)
+    return command;
+  return 0;
+};
+
 int buildin_command(char *input)
 {
   parse_command(input);
@@ -30,16 +39,20 @@ int buildin_command(char *input)
 
 void parse_input(char *input)
 {
-  switch (buildin_command(input))
+  char input_cp[1024];
+  strcpy(input_cp, input);
+  int command = buildin_command(input);
+  int type_command = buildin_command(get_input(input_cp));
+  switch (command)
   {
   case cmd_echo:
     printf("%s\n", input + 5); // don't like that 5 is hard coded
   case cmd_exit:
     break;
   case cmd_type:
-    if (buildin_command(input) != cmd_count)
+    if (type_command != cmd_count)
     {
-      printf("%s is a shell builtin\n", input + 5);
+      printf("%s is a shell builtin\n", input_cp);
       break;
     }
     printf("%s: not found\n", input + 5);
