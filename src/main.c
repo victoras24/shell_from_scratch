@@ -80,7 +80,7 @@ void parse_input(char *input)
   case cmd_type:
     if (type_command != cmd_count)
     {
-      printf("%s is a shell builtin\n", input_cp);
+      printf("type %s is a shell builtin\n", input_cp);
       break;
     }
     else
