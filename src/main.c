@@ -19,7 +19,8 @@ char *parse_command(char *input)
 
 char *get_input(char *input)
 {
-  strtok(input, " ");
+  char *input_cp = strdup(input);
+  strtok(input_cp, " ");
   char *command = strtok(NULL, " ");
   if (command != NULL)
     return command;
@@ -40,25 +41,28 @@ int buildin_command(char *input)
 
 char *get_executable_path(char *command)
 {
-  int cx;
-  char directories[1024];
-  char *path = getenv("PATH");
+  const char *seperator = ":";
+  const char *path = getenv("PATH");
   char *path_cp = strdup(path);
-  char *directory = strtok(path_cp, ":");
-  printf("%s first run\n", directory);
-  while (directory != NULL)
+  char *save_ptr = NULL;
+  char *next_directory = strtok_r(path_cp, seperator, &save_ptr);
+  char executable_directory[256];
+
+  while (next_directory)
   {
-    cx = snprintf(directories, sizeof(directories), "%s/%s", directory, command);
-    if (access(cx, X_OK) == 0)
+    snprintf(executable_directory, sizeof(executable_directory), "%s/%s", next_directory, command);
+    if (access(executable_directory, X_OK) == 0)
     {
       free(path_cp);
-      return directory;
-    };
-    directory = strtok(NULL, ":");
-    printf("%s rest runs\n", directory);
-  }
+      printf("%s\n", executable_directory);
+      return strdup(executable_directory);
+    }
+    next_directory = strtok_r(NULL, seperator, &save_ptr);
+  };
+
   free(path_cp);
-  return 0;
+  printf("%s: not found\n", command + 5);
+  return NULL;
 };
 
 void parse_input(char *input)
@@ -79,8 +83,10 @@ void parse_input(char *input)
       printf("%s is a shell builtin\n", input_cp);
       break;
     }
-    get_executable_path(input_cp);
-    printf("%s: not found\n", input + 5);
+    else
+    {
+      get_executable_path(get_input(input_cp));
+    }
     break;
   default:
     printf("%s: command not found\n", input);
