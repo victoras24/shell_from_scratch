@@ -54,7 +54,7 @@ char *get_executable_path(char *command)
     if (access(executable_directory, X_OK) == 0)
     {
       free(path_cp);
-      printf("%s\n", executable_directory);
+      printf("%s is %s\n", command, executable_directory);
       return strdup(executable_directory);
     }
     next_directory = strtok_r(NULL, seperator, &save_ptr);
