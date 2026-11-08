@@ -61,7 +61,7 @@ char *get_executable_path(char *command)
   };
 
   free(path_cp);
-  printf("%s: not found\n", command + 5);
+  printf("%s: not found\n", command);
   return NULL;
 };
 
