@@ -23,8 +23,12 @@ char *get_input(char *input)
   strtok(input_cp, " ");
   char *command = strtok(NULL, " ");
   if (command != NULL)
+  {
+    free(input_cp);
     return command;
-  return 0;
+  }
+  free(input_cp);
+  return input;
 };
 
 int buildin_command(char *input)
