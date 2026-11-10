@@ -24,10 +24,8 @@ char *get_input(char *input)
   char *command = strtok(NULL, " ");
   if (command != NULL)
   {
-    free(input_cp);
     return command;
   }
-  free(input_cp);
   return input;
 };
 
