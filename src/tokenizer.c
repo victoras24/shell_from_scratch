@@ -10,7 +10,7 @@ static void count_words(char *input, int *count)
     if (input[i] != ' ' && (i == 0 || input[i - 1] == ' '))
       (*count)++;
   }
-};
+}
 
 char **tokenize(char *input)
 {
@@ -18,11 +18,18 @@ char **tokenize(char *input)
   char *save_ptr;
   char *token;
   int word_count;
+  int index;
   count_words(input, &word_count);
 
-  string_array = malloc(sizeof(char) * strlen(input + 1));
+  string_array = malloc(sizeof(*string_array) * (word_count + 1));
+  if (string_array == NULL)
+    return NULL;
 
-  for (token = strtok_r(input, " ", &save_ptr); token != NULL; token = strtok_r(NULL, " ", &save_ptr))
+  for (index = 0, token = strtok_r(input, " ", &save_ptr); token != NULL; token = strtok_r(NULL, " ", &save_ptr), index++)
   {
+    string_array[index] = token;
   }
-};
+
+  string_array[index] = NULL;
+  return string_array;
+}

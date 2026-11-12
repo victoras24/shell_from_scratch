@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "tokenizer.h"
 #include "main.h"
 
 #define GEN(name) #name,
@@ -107,8 +108,18 @@ int main(int argc, char *argv[])
     if (fgets(input, sizeof(input), stdin) == NULL)
       return 0;
     input[strcspn(input, "\n")] = '\0';
-    parse_input(input);
-    if (strcmp(input, "exit") == 0)
-      return 0;
+    printf("%s\n", input);
+
+    char **arguments = tokenize(input);
+    if (arguments == NULL || arguments[0] == NULL)
+    {
+      free(arguments);
+      continue;
+    }
+
+    printf("%s\n", input);
+    // parse_input(input);
+    // if (strcmp(input, "exit") == 0)
+    //   return 0;
   }
 }
