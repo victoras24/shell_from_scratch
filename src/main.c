@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include "tokenizer.h"
 #include "main.h"
+#include "dispatch.h"
 
 #define GEN(name) #name,
 const char *build_in_commands[] = {LIST_OF_COMMANDS};
@@ -103,12 +104,12 @@ int main(int argc, char *argv[])
 
   while (1)
   {
+    int is_continue;
     char input[1024];
     printf("$ ");
     if (fgets(input, sizeof(input), stdin) == NULL)
       return 0;
     input[strcspn(input, "\n")] = '\0';
-    printf("%s\n", input);
 
     char **arguments = tokenize(input);
     if (arguments == NULL || arguments[0] == NULL)
@@ -117,7 +118,13 @@ int main(int argc, char *argv[])
       continue;
     }
 
-    printf("%s\n", input);
+    is_continue = dispatch(arguments);
+    free(arguments);
+    if (is_continue == 1)
+      continue;
+    else
+      break;
+
     // parse_input(input);
     // if (strcmp(input, "exit") == 0)
     //   return 0;
