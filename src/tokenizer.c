@@ -1,19 +1,16 @@
 #include "tokenizer.h"
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
-static void count_words(char *input, int *count)
-{
+static void count_words(char *input, int *count) {
   int i;
-  for (i = 0, *count = 0; input[i] != '\0'; i++)
-  {
+  for (i = 0, *count = 0; input[i] != '\0'; i++) {
     if (input[i] != ' ' && (i == 0 || input[i - 1] == ' '))
       (*count)++;
   }
 }
 
-char **tokenize(char *input)
-{
+char **tokenize(char *input) {
   char **string_array;
   char *save_ptr;
   char *token;
@@ -25,8 +22,8 @@ char **tokenize(char *input)
   if (string_array == NULL)
     return NULL;
 
-  for (index = 0, token = strtok_r(input, " ", &save_ptr); token != NULL; token = strtok_r(NULL, " ", &save_ptr), index++)
-  {
+  for (index = 0, token = strtok_r(input, " ", &save_ptr); token != NULL;
+       token = strtok_r(NULL, " ", &save_ptr), index++) {
     string_array[index] = token;
   }
 

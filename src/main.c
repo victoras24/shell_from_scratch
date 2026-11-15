@@ -1,17 +1,16 @@
+#include "main.h"
+#include "dispatch.h"
+#include "tokenizer.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "tokenizer.h"
-#include "main.h"
-#include "dispatch.h"
 
 #define GEN(name) #name,
 const char *build_in_commands[] = {LIST_OF_COMMANDS};
 #undef GEN
 
-char *parse_command(char *input)
-{
+char *parse_command(char *input) {
   char *space = strchr(input, ' ');
   if (space == NULL)
     return 0;
@@ -19,23 +18,19 @@ char *parse_command(char *input)
   return input;
 };
 
-char *get_input(char *input)
-{
+char *get_input(char *input) {
   char *input_cp = strdup(input);
   strtok(input_cp, " ");
   char *command = strtok(NULL, " ");
-  if (command != NULL)
-  {
+  if (command != NULL) {
     return command;
   }
   return input;
 };
 
-int buildin_command(char *input)
-{
+int buildin_command(char *input) {
   parse_command(input);
-  for (size_t i = 0; i < cmd_count; i++)
-  {
+  for (size_t i = 0; i < cmd_count; i++) {
     if (input != NULL)
       if (strcmp(build_in_commands[i], input) == 0)
         return i;
@@ -43,8 +38,7 @@ int buildin_command(char *input)
   return cmd_count;
 }
 
-char *get_executable_path(char *command)
-{
+char *get_executable_path(char *command) {
   const char *seperator = ":";
   const char *path = getenv("PATH");
   char *path_cp = strdup(path);
@@ -52,11 +46,10 @@ char *get_executable_path(char *command)
   char *next_directory = strtok_r(path_cp, seperator, &save_ptr);
   char executable_directory[256];
 
-  while (next_directory)
-  {
-    snprintf(executable_directory, sizeof(executable_directory), "%s/%s", next_directory, command);
-    if (access(executable_directory, X_OK) == 0)
-    {
+  while (next_directory) {
+    snprintf(executable_directory, sizeof(executable_directory), "%s/%s",
+             next_directory, command);
+    if (access(executable_directory, X_OK) == 0) {
       free(path_cp);
       printf("%s is %s\n", command, executable_directory);
       return strdup(executable_directory);
@@ -69,26 +62,21 @@ char *get_executable_path(char *command)
   return NULL;
 };
 
-void parse_input(char *input)
-{
+void parse_input(char *input) {
   char input_cp[1024];
   strcpy(input_cp, input);
   int command = buildin_command(input);
   int type_command = buildin_command(get_input(input_cp));
-  switch (command)
-  {
+  switch (command) {
   case cmd_echo:
     printf("%s\n", input + 5); // don't like that 5 is hard coded
   case cmd_exit:
     break;
   case cmd_type:
-    if (type_command != cmd_count)
-    {
+    if (type_command != cmd_count) {
       printf("%s is a shell builtin\n", get_input(input_cp));
       break;
-    }
-    else
-    {
+    } else {
       get_executable_path(get_input(input_cp));
     }
     break;
@@ -98,12 +86,10 @@ void parse_input(char *input)
   }
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
   setbuf(stdout, NULL);
 
-  while (1)
-  {
+  while (1) {
     int is_continue;
     char input[1024];
     printf("$ ");
@@ -112,8 +98,7 @@ int main(int argc, char *argv[])
     input[strcspn(input, "\n")] = '\0';
 
     char **arguments = tokenize(input);
-    if (arguments == NULL || arguments[0] == NULL)
-    {
+    if (arguments == NULL || arguments[0] == NULL) {
       free(arguments);
       continue;
     }
