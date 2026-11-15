@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include "tokenizer.h"
 #include "main.h"
 #include "dispatch.h"
@@ -43,32 +42,6 @@ int buildin_command(char *input)
   return cmd_count;
 }
 
-char *get_executable_path(char *command)
-{
-  const char *seperator = ":";
-  const char *path = getenv("PATH");
-  char *path_cp = strdup(path);
-  char *save_ptr = NULL;
-  char *next_directory = strtok_r(path_cp, seperator, &save_ptr);
-  char executable_directory[256];
-
-  while (next_directory)
-  {
-    snprintf(executable_directory, sizeof(executable_directory), "%s/%s", next_directory, command);
-    if (access(executable_directory, X_OK) == 0)
-    {
-      free(path_cp);
-      printf("%s is %s\n", command, executable_directory);
-      return strdup(executable_directory);
-    }
-    next_directory = strtok_r(NULL, seperator, &save_ptr);
-  };
-
-  free(path_cp);
-  printf("%s: not found\n", command);
-  return NULL;
-};
-
 void parse_input(char *input)
 {
   char input_cp[1024];
@@ -89,7 +62,7 @@ void parse_input(char *input)
     }
     else
     {
-      get_executable_path(get_input(input_cp));
+      // get_executable_path(get_input(input_cp));
     }
     break;
   default:
@@ -106,6 +79,7 @@ int main(int argc, char *argv[])
   {
     int is_continue;
     char input[1024];
+
     printf("$ ");
     if (fgets(input, sizeof(input), stdin) == NULL)
       return 0;
