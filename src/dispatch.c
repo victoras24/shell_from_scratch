@@ -23,25 +23,12 @@ static struct builtin_command builtin_commands[] = {
 
 char *is_builtin_command(char *command)
 {
-  for (int i = 0; i < sizeof(builtin_commands) / sizeof(builtin_commands[0]); i++)
+  for (size_t i = 0; i < sizeof(builtin_commands) / sizeof(builtin_commands[0]); i++)
   {
     if (strcmp(command, builtin_commands[i].name) == 0)
       return command;
   }
   return NULL;
-}
-
-int builtin_type(char **arguments)
-{
-  for (int i = 1; arguments[i] != NULL; i++)
-  {
-    if (is_builtin_command(arguments[i]))
-    {
-      printf("%s is a shell builtin\n", arguments[i]);
-      return 1;
-    }
-  };
-  return 0;
 }
 
 char *get_executable_path(char *command)
@@ -69,6 +56,23 @@ char *get_executable_path(char *command)
   printf("%s: not found\n", command);
   return NULL;
 };
+
+int builtin_type(char **arguments)
+{
+  for (int i = 1; arguments[i] != NULL; i++)
+  {
+    if (is_builtin_command(arguments[i]))
+    {
+      printf("%s is a shell builtin\n", arguments[i]);
+      return 1;
+    }
+    else
+    {
+      get_executable_path(arguments[i]);
+    }
+  };
+  return 1;
+}
 
 static int builtin_echo(char **arguments)
 {

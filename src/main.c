@@ -12,69 +12,7 @@
 const char *build_in_commands[] = {LIST_OF_COMMANDS};
 #undef GEN
 
-char *parse_command(char *input)
-{
-  char *space = strchr(input, ' ');
-  if (space == NULL)
-    return 0;
-  *space = '\0';
-  return input;
-};
-
-char *get_input(char *input)
-{
-  char *input_cp = strdup(input);
-  strtok(input_cp, " ");
-  char *command = strtok(NULL, " ");
-  if (command != NULL)
-  {
-    return command;
-  }
-  return input;
-};
-
-int buildin_command(char *input)
-{
-  parse_command(input);
-  for (size_t i = 0; i < cmd_count; i++)
-  {
-    if (input != NULL)
-      if (strcmp(build_in_commands[i], input) == 0)
-        return i;
-  }
-  return cmd_count;
-}
-
-void parse_input(char *input)
-{
-  char input_cp[1024];
-  strcpy(input_cp, input);
-  int command = buildin_command(input);
-  int type_command = buildin_command(get_input(input_cp));
-  switch (command)
-  {
-  case cmd_echo:
-    printf("%s\n", input + 5); // don't like that 5 is hard coded
-  case cmd_exit:
-    break;
-  case cmd_type:
-    if (type_command != cmd_count)
-    {
-      printf("%s is a shell builtin\n", get_input(input_cp));
-      break;
-    }
-    else
-    {
-      // get_executable_path(get_input(input_cp));
-    }
-    break;
-  default:
-    printf("%s: command not found\n", input);
-    break;
-  }
-}
-
-int main(int argc, char *argv[])
+int main()
 {
   setbuf(stdout, NULL);
 
@@ -101,9 +39,5 @@ int main(int argc, char *argv[])
       continue;
     else
       break;
-
-    // parse_input(input);
-    // if (strcmp(input, "exit") == 0)
-    //   return 0;
   }
 }
