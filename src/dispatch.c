@@ -83,10 +83,7 @@ static int builtin_echo(char **arguments)
   return 1;
 }
 
-static int builtin_exit(char **arguments)
-{
-  return 0;
-}
+static int builtin_exit(char **arguments) { return 0; }
 
 int dispatch(char **arguments)
 {
@@ -94,7 +91,8 @@ int dispatch(char **arguments)
   int is_builtin_found = 0;
   char *command = arguments[0];
 
-  for (size_t i = 0; i < sizeof(builtin_commands) / sizeof(builtin_commands[0]); i++)
+  for (size_t i = 0; i < sizeof(builtin_commands) / sizeof(builtin_commands[0]);
+       i++)
   {
     if (strcmp(command, builtin_commands[i].name) == 0)
     {

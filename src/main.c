@@ -1,3 +1,6 @@
+#include "main.h"
+#include "dispatch.h"
+#include "tokenizer.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
