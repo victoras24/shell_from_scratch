@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/types.h>
 
 static void builtin_type(char **arguments);
 static void builtin_echo(char **arguments);
