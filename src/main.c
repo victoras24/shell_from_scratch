@@ -10,11 +10,13 @@
 const char *build_in_commands[] = {LIST_OF_COMMANDS};
 #undef GEN
 
-int main() {
+int main()
+{
   setbuf(stdout, NULL);
 
-  while (1) {
-    int is_continue;
+  while (1)
+  {
+    int is_exit;
     char input[1024];
 
     printf("$ ");
@@ -23,16 +25,17 @@ int main() {
     input[strcspn(input, "\n")] = '\0';
 
     char **arguments = tokenize(input);
-    if (arguments == NULL || arguments[0] == NULL) {
+    if (arguments == NULL || arguments[0] == NULL)
+    {
       free(arguments);
       continue;
     }
 
-    is_continue = dispatch(arguments);
+    is_exit = dispatch(arguments);
     free(arguments);
-    if (is_continue == 1)
-      continue;
-    else
+    if (is_exit == 1)
       break;
+    else
+      continue;
   }
 }
