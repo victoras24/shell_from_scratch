@@ -98,13 +98,14 @@ static void builtin_echo(char **arguments)
 
 static void builtin_exit(char **arguments) {}
 
-void execute_path(char **arguments)
+static void execute_path(char **arguments)
 {
   pid_t pid = 0;
   int wait_pid_log_number;
   char *executable_path;
+  char *command = arguments[0];
 
-  executable_path = get_executable_path(arguments[0]);
+  executable_path = get_executable_path(command);
 
   if (executable_path != NULL)
   {
@@ -115,15 +116,14 @@ void execute_path(char **arguments)
     case -1:
     {
       perror("fork");
-      exit(EXIT_FAILURE);
       break;
     }
     case 0:
     {
       if (execv(executable_path, arguments) == -1)
       {
-        printf("%s", "execv errored oout");
-        break;
+        perror(command);
+        exit(EXIT_FAILURE);
       }
     }
     default:
@@ -137,8 +137,9 @@ void execute_path(char **arguments)
   }
   else
   {
-    printf("%s: command not found\n", arguments[0]);
+    printf("%s: command not found\n", command);
   }
+  free(executable_path);
 }
 
 int dispatch(char **arguments)
