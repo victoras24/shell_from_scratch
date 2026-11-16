@@ -1,9 +1,9 @@
 #include "dispatch.h"
+#include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <stdlib.h>
-#include <limits.h>
 
 static int builtin_type(char **arguments);
 static int builtin_echo(char **arguments);
@@ -21,9 +21,10 @@ static struct builtin_command builtin_commands[] = {
     {"exit", builtin_exit},
 };
 
-char *is_builtin_command(char *command)
+static char *is_builtin_command(char *command)
 {
-  for (size_t i = 0; i < sizeof(builtin_commands) / sizeof(builtin_commands[0]); i++)
+  for (size_t i = 0; i < sizeof(builtin_commands) / sizeof(builtin_commands[0]);
+       i++)
   {
     if (strcmp(command, builtin_commands[i].name) == 0)
       return command;
@@ -31,7 +32,7 @@ char *is_builtin_command(char *command)
   return NULL;
 }
 
-char *get_executable_path(char *command)
+static char *get_executable_path(char *command)
 {
   const char *seperator = ":";
   const char *path = getenv("PATH");
@@ -42,18 +43,17 @@ char *get_executable_path(char *command)
 
   while (next_directory)
   {
-    snprintf(executable_directory, sizeof(executable_directory), "%s/%s", next_directory, command);
+    snprintf(executable_directory, sizeof(executable_directory), "%s/%s",
+             next_directory, command);
     if (access(executable_directory, X_OK) == 0)
     {
       free(path_cp);
-      printf("%s is %s\n", command, executable_directory);
       return strdup(executable_directory);
     }
     next_directory = strtok_r(NULL, seperator, &save_ptr);
   };
 
   free(path_cp);
-  printf("%s: not found\n", command);
   return NULL;
 };
 
@@ -61,14 +61,22 @@ int builtin_type(char **arguments)
 {
   for (int i = 1; arguments[i] != NULL; i++)
   {
-    if (is_builtin_command(arguments[i]))
+    char *command = arguments[i];
+    if (is_builtin_command(command))
     {
-      printf("%s is a shell builtin\n", arguments[i]);
+      printf("%s is a shell builtin\n", command);
       return 1;
     }
     else
     {
-      get_executable_path(arguments[i]);
+      char *executable_path = get_executable_path(command);
+      if (executable_path != NULL)
+        printf("%s is %s\n", command, executable_path);
+      else
+      {
+        printf("%s: not found\n", command);
+      }
+      free(executable_path);
     }
   };
   return 1;
