@@ -118,16 +118,17 @@ void execute_path(char **arguments)
     }
     case 0:
     {
-      int is_error = 0;
-
-      is_error = execv(executable_path, arguments);
-      if (is_error == -1)
+      if (execv(executable_path, arguments) == -1)
+      {
         printf("%s", "execv errored oout");
-      break;
+        break;
+      }
     }
     default:
     {
-      waitpid(pid, &wait_pid_log_number, 0);
+      pid_t waited_pid = waitpid(pid, &wait_pid_log_number, 0);
+      if (waited_pid == -1)
+        perror("waitpid failed");
       break;
     }
     }
