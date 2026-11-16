@@ -5,6 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 
 static void builtin_type(char **arguments);
 static void builtin_echo(char **arguments);
