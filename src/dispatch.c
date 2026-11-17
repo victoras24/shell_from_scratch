@@ -113,9 +113,9 @@ static void builtin_pwd(char **arguments)
 
 static void builtin_cd(char **arguments)
 {
-  char *home_dir = getenv("HOME");
-  char *last_dir = getenv("OLDPWD");
-  char *path = arguments[1];
+  const char *home_dir = getenv("HOME");
+  const char *last_dir = getenv("OLDPWD");
+  const char *path = arguments[1];
 
   if (path == NULL)
     chdir(home_dir);
@@ -124,7 +124,10 @@ static void builtin_cd(char **arguments)
     if (strcmp(path, "-") == 0)
       chdir(last_dir);
     else
-      chdir(path);
+    {
+      if (chdir(path) == -1)
+        printf("cd: %s: No such file or directory", path);
+    }
   }
 }
 
