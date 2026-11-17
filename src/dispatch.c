@@ -126,7 +126,7 @@ static void builtin_cd(char **arguments)
     else
     {
       if (chdir(path) == -1)
-        printf("cd: %s: No such file or directory", path);
+        printf("cd: %s: No such file or directory\n", path);
     }
   }
 }
