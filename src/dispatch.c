@@ -11,6 +11,7 @@ static void builtin_type(char **arguments);
 static void builtin_echo(char **arguments);
 static void builtin_exit(char **arguments);
 static void builtin_pwd(char **arguments);
+static void builtin_cd(char **arguments);
 
 struct builtin_command
 {
@@ -24,6 +25,7 @@ static struct builtin_command builtin_commands[] = {
     {"echo", builtin_echo, 0},
     {"exit", builtin_exit, 1},
     {"pwd", builtin_pwd, 0},
+    {"cd", builtin_cd, 0},
 };
 
 static const struct builtin_command *get_builtin_command(char *command)
@@ -107,6 +109,23 @@ static void builtin_pwd(char **arguments)
     printf("%s\n", cwd);
   else
     perror("getcwd() error");
+}
+
+static void builtin_cd(char **arguments)
+{
+  char *home_dir = getenv("HOME");
+  char *last_dir = getenv("OLDPWD");
+  char *path = arguments[1];
+
+  if (path == NULL)
+    chdir(home_dir);
+  else
+  {
+    if (strcmp(path, "-") == 0)
+      chdir(last_dir);
+    else
+      chdir(path);
+  }
 }
 
 static void execute_path(char **arguments)
