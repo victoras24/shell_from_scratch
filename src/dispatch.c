@@ -117,7 +117,7 @@ static void builtin_cd(char **arguments)
   const char *last_dir = getenv("OLDPWD");
   const char *path = arguments[1];
 
-  if (path == NULL)
+  if (path == NULL || (strcmp(path, "~") == 0))
     chdir(home_dir);
   else
   {
