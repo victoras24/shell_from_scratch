@@ -10,6 +10,7 @@
 static void builtin_type(char **arguments);
 static void builtin_echo(char **arguments);
 static void builtin_exit(char **arguments);
+static void builtin_pwd(char **arguments);
 
 struct builtin_command
 {
@@ -22,6 +23,7 @@ static struct builtin_command builtin_commands[] = {
     {"type", builtin_type, 0},
     {"echo", builtin_echo, 0},
     {"exit", builtin_exit, 1},
+    {"pwd", builtin_pwd, 0},
 };
 
 static const struct builtin_command *get_builtin_command(char *command)
@@ -97,6 +99,15 @@ static void builtin_echo(char **arguments)
 }
 
 static void builtin_exit(char **arguments) {}
+
+static void builtin_pwd(char **arguments)
+{
+  char cwd[PATH_MAX];
+  if (getcwd(cwd, sizeof(cwd)) != NULL)
+    printf("%s\n", cwd);
+  else
+    perror("getcwd() error");
+}
 
 static void execute_path(char **arguments)
 {
