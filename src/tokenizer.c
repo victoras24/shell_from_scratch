@@ -31,7 +31,7 @@ char **tokenize(char *input)
 
   for (index = 0, string_array_index = 0, token_index = 0; input[index] != '\0'; index++)
   {
-    if (need_new_token == 1 && input[index] != ' ')
+    if (need_new_token == 1 && (input[index] != ' ' || is_inside_single_quotes == 1) && input[index] != '\'')
     {
       token = malloc(strlen(input) + 1);
       if (token == NULL)
@@ -39,7 +39,7 @@ char **tokenize(char *input)
       need_new_token = 0;
     }
 
-    if (input[index] == ' ' && need_new_token == 0)
+    if (input[index] == ' ' && need_new_token == 0 && is_inside_single_quotes == 0)
     {
       token[token_index] = '\0';
       token_index = 0;
@@ -49,7 +49,12 @@ char **tokenize(char *input)
       continue;
     }
 
-    if (input[index] != ' ')
+    if (input[index] == '\'')
+    {
+      is_inside_single_quotes = !is_inside_single_quotes;
+    }
+
+    if ((input[index] != ' ' || is_inside_single_quotes == 1) && input[index] != '\'')
     {
       token[token_index] = input[index];
       token_index++;
