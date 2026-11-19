@@ -29,7 +29,7 @@ static void count_words(char *input, int *count)
 
 char **tokenize(char *input)
 {
-  int quote_state = 0;
+  int quote_state = UNQUOTED;
   char **string_array;
   int string_array_index;
   char *token;
@@ -46,7 +46,7 @@ char **tokenize(char *input)
   for (index = 0, string_array_index = 0, token_index = 0; input[index] != '\0'; index++)
   {
 
-    if (need_new_token == 1)
+    if (need_new_token == 1 && input[index] != ' ')
     {
       token = malloc(strlen(input) + 1);
       if (token == NULL)
@@ -66,7 +66,7 @@ char **tokenize(char *input)
         quote_state = SINGLE_QUOTED;
       else if (input[index] == '\"')
         quote_state = DOUBLE_QUOTED;
-      else if (input[index] == ' ' && input[index - 1] != ' ')
+      else if (input[index] == ' ' && need_new_token == 0)
       {
         push_token(token, token_index, string_array, &string_array_index);
         token_index = 0;
