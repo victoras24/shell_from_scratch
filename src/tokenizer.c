@@ -68,11 +68,5 @@ char **tokenize(char *input)
     string_array_index++;
   }
   string_array[string_array_index] = NULL;
-
-  for (int i = 0; string_array[i] != NULL; i++)
-  {
-    printf("this is print: %s\n", string_array[i]);
-  }
-
   return string_array;
 }
