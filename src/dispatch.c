@@ -90,9 +90,6 @@ static void builtin_type(char **arguments)
 
 static void builtin_echo(char **arguments)
 {
-  // if (strcmp(arguments[0][0], "'") == 0)
-  // {
-  // }
   for (int i = 1; arguments[i] != NULL; i++)
   {
     if (arguments[i + 1] != NULL)

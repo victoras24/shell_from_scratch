@@ -3,6 +3,13 @@
 #include <string.h>
 #include <stdio.h>
 
+enum quote_state
+{
+  UNQUOTED,
+  SINGLE_QUOTED,
+  DOUBLE_QUOTED
+};
+
 static void push_token(char *token, int token_index, char **string_array, int *string_array_index)
 {
   token[token_index] = '\0';
@@ -22,13 +29,13 @@ static void count_words(char *input, int *count)
 
 char **tokenize(char *input)
 {
+  int quote_state = 0;
   char **string_array;
   int string_array_index;
   char *token;
   int index;
   int word_count;
   int token_index;
-  int is_inside_single_quotes = 0;
   int need_new_token = 1;
 
   count_words(input, &word_count);
@@ -38,7 +45,8 @@ char **tokenize(char *input)
 
   for (index = 0, string_array_index = 0, token_index = 0; input[index] != '\0'; index++)
   {
-    if (need_new_token == 1 && (input[index] != ' ' || is_inside_single_quotes == 1) && input[index] != '\'')
+
+    if (need_new_token == 1)
     {
       token = malloc(strlen(input) + 1);
       if (token == NULL)
@@ -46,23 +54,45 @@ char **tokenize(char *input)
       need_new_token = 0;
     }
 
-    if (input[index] == ' ' && need_new_token == 0 && is_inside_single_quotes == 0)
+    switch (quote_state)
     {
-      push_token(token, token_index, string_array, &string_array_index);
-      token_index = 0;
-      need_new_token = 1;
-      continue;
-    }
-
-    if (input[index] == '\'')
-    {
-      is_inside_single_quotes = !is_inside_single_quotes;
-    }
-
-    if ((input[index] != ' ' || is_inside_single_quotes == 1) && input[index] != '\'')
-    {
+    case UNQUOTED:
+      if (input[index] != ' ' && input[index] != '\'' && input[index] != '\"')
+      {
+        token[token_index] = input[index];
+        token_index++;
+      }
+      else if (input[index] == '\'')
+        quote_state = SINGLE_QUOTED;
+      else if (input[index] == '\"')
+        quote_state = DOUBLE_QUOTED;
+      else if (input[index] == ' ' && input[index - 1] != ' ')
+      {
+        push_token(token, token_index, string_array, &string_array_index);
+        token_index = 0;
+        need_new_token = 1;
+      }
+      break;
+    case SINGLE_QUOTED:
+      if (input[index] == '\'')
+      {
+        quote_state = UNQUOTED;
+        break;
+      }
       token[token_index] = input[index];
       token_index++;
+      break;
+    case DOUBLE_QUOTED:
+      if (input[index] == '\"')
+      {
+        quote_state = UNQUOTED;
+        break;
+      }
+      token[token_index] = input[index];
+      token_index++;
+      break;
+    default:
+      break;
     }
   }
 
