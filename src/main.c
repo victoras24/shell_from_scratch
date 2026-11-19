@@ -25,10 +25,6 @@ int main()
     input[strcspn(input, "\n")] = '\0';
 
     char **arguments = tokenize(input);
-    for (size_t i = 0; arguments[i] != NULL; i++)
-    {
-      printf("%s", arguments[i]);
-    }
 
     if (arguments == NULL || arguments[0] == NULL)
     {

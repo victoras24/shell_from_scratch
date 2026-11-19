@@ -3,6 +3,13 @@
 #include <string.h>
 #include <stdio.h>
 
+static void push_token(char *token, int token_index, char **string_array, int *string_array_index)
+{
+  token[token_index] = '\0';
+  string_array[*string_array_index] = token;
+  (*string_array_index)++;
+}
+
 static void count_words(char *input, int *count)
 {
   int i;
@@ -18,13 +25,13 @@ char **tokenize(char *input)
   char **string_array;
   int string_array_index;
   char *token;
-  int word_count;
   int index;
+  int word_count;
   int token_index;
-  count_words(input, &word_count);
   int is_inside_single_quotes = 0;
   int need_new_token = 1;
 
+  count_words(input, &word_count);
   string_array = malloc(sizeof(*string_array) * (word_count + 1));
   if (string_array == NULL)
     return NULL;
@@ -41,10 +48,8 @@ char **tokenize(char *input)
 
     if (input[index] == ' ' && need_new_token == 0 && is_inside_single_quotes == 0)
     {
-      token[token_index] = '\0';
+      push_token(token, token_index, string_array, &string_array_index);
       token_index = 0;
-      string_array[string_array_index] = token;
-      string_array_index++;
       need_new_token = 1;
       continue;
     }
@@ -63,9 +68,7 @@ char **tokenize(char *input)
 
   if (need_new_token == 0)
   {
-    token[token_index] = '\0';
-    string_array[string_array_index] = token;
-    string_array_index++;
+    push_token(token, token_index, string_array, &string_array_index);
   }
   string_array[string_array_index] = NULL;
   return string_array;
