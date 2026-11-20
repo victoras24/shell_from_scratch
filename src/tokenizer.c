@@ -5,16 +5,32 @@
 
 enum quote_state
 {
-  UNQUOTED,
-  SINGLE_QUOTED,
-  DOUBLE_QUOTED
+  UNQUOTED_STATE,
+  SINGLE_QUOTED_STATE,
+  DOUBLE_QUOTED_STATE
 };
 
-static void push_token(char *token, int token_index, char **string_array, int *string_array_index)
+enum symbol
 {
-  token[token_index] = '\0';
+  SPACE = ' ',
+  SINGLE_QUOTES = '\'',
+  DOUBLE_QUOTES = '"',
+  BACKSLASHES = '\\',
+};
+
+static void push_token_to_string_array(char *token, int *token_index, char **string_array, int *string_array_index, int *need_new_token)
+{
+  token[*token_index] = '\0';
   string_array[*string_array_index] = token;
   (*string_array_index)++;
+  *token_index = 0;
+  *need_new_token = 1;
+}
+
+static void push_char_to_token(char *token, char character, int *token_index)
+{
+  token[*token_index] = character;
+  (*token_index)++;
 }
 
 static void count_words(char *input, int *count)
@@ -29,7 +45,7 @@ static void count_words(char *input, int *count)
 
 char **tokenize(char *input)
 {
-  int quote_state = UNQUOTED;
+  enum quote_state quote_state = UNQUOTED_STATE;
   char **string_array;
   int string_array_index;
   char *token;
@@ -56,40 +72,51 @@ char **tokenize(char *input)
 
     switch (quote_state)
     {
-    case UNQUOTED:
-      if (input[index] != ' ' && input[index] != '\'' && input[index] != '\"')
+    case UNQUOTED_STATE:
+      switch (input[index])
       {
-        token[token_index] = input[index];
-        token_index++;
-      }
-      else if (input[index] == '\'')
-        quote_state = SINGLE_QUOTED;
-      else if (input[index] == '\"')
-        quote_state = DOUBLE_QUOTED;
-      else if (input[index] == ' ' && need_new_token == 0)
-      {
-        push_token(token, token_index, string_array, &string_array_index);
-        token_index = 0;
-        need_new_token = 1;
-      }
-      break;
-    case SINGLE_QUOTED:
-      if (input[index] == '\'')
-      {
-        quote_state = UNQUOTED;
+      case SPACE:
+        if (need_new_token == 0)
+        {
+          push_token_to_string_array(token, &token_index, string_array, &string_array_index, &need_new_token);
+        }
+        break;
+      case SINGLE_QUOTES:
+        quote_state = SINGLE_QUOTED_STATE;
+        break;
+      case DOUBLE_QUOTES:
+        quote_state = DOUBLE_QUOTED_STATE;
+        break;
+      case BACKSLASHES:
+        printf("WOWOOWOWO");
+        need_new_token = 0;
+        break;
+      default:
+        push_char_to_token(token, input[index], &token_index);
         break;
       }
-      token[token_index] = input[index];
-      token_index++;
       break;
-    case DOUBLE_QUOTED:
-      if (input[index] == '\"')
+    case SINGLE_QUOTED_STATE:
+      switch (input[index])
       {
-        quote_state = UNQUOTED;
+      case SINGLE_QUOTES:
+        quote_state = UNQUOTED_STATE;
+        break;
+      default:
+        push_char_to_token(token, input[index], &token_index);
         break;
       }
-      token[token_index] = input[index];
-      token_index++;
+      break;
+    case DOUBLE_QUOTED_STATE:
+      switch (input[index])
+      {
+      case DOUBLE_QUOTES:
+        quote_state = UNQUOTED_STATE;
+        break;
+      default:
+        push_char_to_token(token, input[index], &token_index);
+        break;
+      }
       break;
     default:
       break;
@@ -98,7 +125,7 @@ char **tokenize(char *input)
 
   if (need_new_token == 0)
   {
-    push_token(token, token_index, string_array, &string_array_index);
+    push_token_to_string_array(token, &token_index, string_array, &string_array_index, &need_new_token);
   }
   string_array[string_array_index] = NULL;
   return string_array;
