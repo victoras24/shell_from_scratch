@@ -8,7 +8,6 @@ enum quote_state
   UNQUOTED_STATE,
   SINGLE_QUOTED_STATE,
   DOUBLE_QUOTED_STATE,
-  BACKSLASHED_STATE
 };
 
 enum symbol
@@ -16,6 +15,7 @@ enum symbol
   SPACE = ' ',
   SINGLE_QUOTES = '\'',
   DOUBLE_QUOTES = '"',
+  BACKSLASHES = '\\',
 };
 
 static void push_token_to_string_array(char *token, int *token_index, char **string_array, int *string_array_index, int *need_new_token)
