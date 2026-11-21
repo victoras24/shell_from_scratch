@@ -6,10 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define GEN(name) #name,
-const char *build_in_commands[] = {LIST_OF_COMMANDS};
-#undef GEN
-
 int main()
 {
   setbuf(stdout, NULL);
@@ -33,6 +29,12 @@ int main()
     }
 
     is_exit = dispatch(arguments);
+
+    for (size_t i = 0; arguments[i] != NULL; i++)
+    {
+      free(arguments[i]);
+    };
+
     free(arguments);
     if (is_exit == 1)
       break;
