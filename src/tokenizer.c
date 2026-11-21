@@ -18,22 +18,22 @@ enum symbol
   BACKSLASHES = '\\',
 };
 
-static void push_token_to_string_array(char *token, int *token_index, char **string_array, int *string_array_index, int *need_new_token)
+static void push_token(char *token, int *token_index, char **tokens, int *tokens_index, int *need_new_token)
 {
   token[*token_index] = '\0';
-  string_array[*string_array_index] = token;
-  (*string_array_index)++;
+  tokens[*tokens_index] = token;
+  (*tokens_index)++;
   *token_index = 0;
   *need_new_token = 1;
 }
 
-static void push_char_to_token(char *token, char character, int *token_index)
+static void push_char(char *token, char character, int *token_index)
 {
   token[*token_index] = character;
   (*token_index)++;
 }
 
-static void count_words(char *input, int *count)
+static void count_words(const char *input, int *count)
 {
   int i;
   for (i = 0, *count = 0; input[i] != '\0'; i++)
@@ -43,11 +43,11 @@ static void count_words(char *input, int *count)
   }
 }
 
-char **tokenize(char *input)
+char **tokenize(const char *input)
 {
   enum quote_state quote_state = UNQUOTED_STATE;
-  char **string_array;
-  int string_array_index;
+  char **tokens;
+  int tokens_index;
   char *token;
   int index;
   int word_count;
@@ -55,11 +55,11 @@ char **tokenize(char *input)
   int need_new_token = 1;
 
   count_words(input, &word_count);
-  string_array = malloc(sizeof(*string_array) * (word_count + 1));
-  if (string_array == NULL)
+  tokens = malloc(sizeof(*tokens) * (word_count + 1));
+  if (tokens == NULL)
     return NULL;
 
-  for (index = 0, string_array_index = 0, token_index = 0; input[index] != '\0'; index++)
+  for (index = 0, tokens_index = 0, token_index = 0; input[index] != '\0'; index++)
   {
 
     if (need_new_token == 1 && input[index] != ' ')
@@ -78,7 +78,7 @@ char **tokenize(char *input)
       case SPACE:
         if (need_new_token == 0)
         {
-          push_token_to_string_array(token, &token_index, string_array, &string_array_index, &need_new_token);
+          push_token(token, &token_index, tokens, &tokens_index, &need_new_token);
         }
         break;
       case SINGLE_QUOTES:
@@ -90,12 +90,12 @@ char **tokenize(char *input)
       case BACKSLASHES:
         if (index[input + 1] != ' ')
         {
-          push_char_to_token(token, input[index + 1], &token_index);
+          push_char(token, input[index + 1], &token_index);
           index++;
         }
         break;
       default:
-        push_char_to_token(token, input[index], &token_index);
+        push_char(token, input[index], &token_index);
         break;
       }
       break;
@@ -106,7 +106,7 @@ char **tokenize(char *input)
         quote_state = UNQUOTED_STATE;
         break;
       default:
-        push_char_to_token(token, input[index], &token_index);
+        push_char(token, input[index], &token_index);
         break;
       }
       break;
@@ -117,11 +117,11 @@ char **tokenize(char *input)
         quote_state = UNQUOTED_STATE;
         break;
       case BACKSLASHES:
-        push_char_to_token(token, input[index + 1], &token_index);
+        push_char(token, input[index + 1], &token_index);
         index++;
         break;
       default:
-        push_char_to_token(token, input[index], &token_index);
+        push_char(token, input[index], &token_index);
         break;
       }
       break;
@@ -132,8 +132,8 @@ char **tokenize(char *input)
 
   if (need_new_token == 0)
   {
-    push_token_to_string_array(token, &token_index, string_array, &string_array_index, &need_new_token);
+    push_token(token, &token_index, tokens, &tokens_index, &need_new_token);
   }
-  string_array[string_array_index] = NULL;
-  return string_array;
+  tokens[tokens_index] = NULL;
+  return tokens;
 }

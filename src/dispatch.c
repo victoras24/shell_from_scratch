@@ -100,10 +100,11 @@ static void builtin_echo(char **arguments)
   printf("%s", "\n");
 }
 
-static void builtin_exit(char **arguments) {}
+static void builtin_exit(char **arguments) { (void)arguments; }
 
 static void builtin_pwd(char **arguments)
 {
+  (void)arguments;
   char cwd[PATH_MAX];
   if (getcwd(cwd, sizeof(cwd)) != NULL)
     printf("%s\n", cwd);
@@ -158,6 +159,7 @@ static void execute_path(char **arguments)
         perror(command);
         exit(EXIT_FAILURE);
       }
+      break;
     }
     default:
     {
