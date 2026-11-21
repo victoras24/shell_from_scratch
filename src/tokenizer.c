@@ -16,7 +16,6 @@ enum symbol
   SPACE = ' ',
   SINGLE_QUOTES = '\'',
   DOUBLE_QUOTES = '"',
-  BACKSLASHES = '\\',
 };
 
 static void push_token_to_string_array(char *token, int *token_index, char **string_array, int *string_array_index, int *need_new_token)
@@ -89,7 +88,11 @@ char **tokenize(char *input)
         quote_state = DOUBLE_QUOTED_STATE;
         break;
       case BACKSLASHES:
-        quote_state = BACKSLASHED_STATE;
+        if (index[input + 1] != ' ')
+        {
+          push_char_to_token(token, input[index + 1], &token_index);
+          index++;
+        }
         break;
       default:
         push_char_to_token(token, input[index], &token_index);
@@ -114,23 +117,14 @@ char **tokenize(char *input)
         quote_state = UNQUOTED_STATE;
         break;
       case BACKSLASHES:
-        quote_state = BACKSLASHED_STATE;
+        push_char_to_token(token, input[index + 1], &token_index);
+        index++;
+        break;
       default:
         push_char_to_token(token, input[index], &token_index);
         break;
       }
       break;
-    case BACKSLASHED_STATE:
-      switch (input[index])
-      {
-      case BACKSLASHES:
-        break;
-      default:
-        push_char_to_token(token, input[index], &token_index);
-        quote_state = UNQUOTED_STATE;
-        break;
-      }
-
     default:
       break;
     }
