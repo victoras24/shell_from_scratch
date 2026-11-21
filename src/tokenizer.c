@@ -7,7 +7,8 @@ enum quote_state
 {
   UNQUOTED_STATE,
   SINGLE_QUOTED_STATE,
-  DOUBLE_QUOTED_STATE
+  DOUBLE_QUOTED_STATE,
+  BACKSLASHED_STATE
 };
 
 enum symbol
@@ -88,8 +89,7 @@ char **tokenize(char *input)
         quote_state = DOUBLE_QUOTED_STATE;
         break;
       case BACKSLASHES:
-        printf("WOWOOWOWO");
-        need_new_token = 0;
+        quote_state = BACKSLASHED_STATE;
         break;
       default:
         push_char_to_token(token, input[index], &token_index);
@@ -102,6 +102,8 @@ char **tokenize(char *input)
       case SINGLE_QUOTES:
         quote_state = UNQUOTED_STATE;
         break;
+      case BACKSLASHES:
+        break;
       default:
         push_char_to_token(token, input[index], &token_index);
         break;
@@ -113,11 +115,16 @@ char **tokenize(char *input)
       case DOUBLE_QUOTES:
         quote_state = UNQUOTED_STATE;
         break;
+      case BACKSLASHES:
+        break;
       default:
         push_char_to_token(token, input[index], &token_index);
         break;
       }
       break;
+    case BACKSLASHED_STATE:
+      push_char_to_token(token, input[index], &token_index);
+      quote_state = UNQUOTED_STATE;
     default:
       break;
     }
