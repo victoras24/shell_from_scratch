@@ -113,14 +113,24 @@ char **tokenize(char *input)
       case DOUBLE_QUOTES:
         quote_state = UNQUOTED_STATE;
         break;
+      case BACKSLASHES:
+        quote_state = BACKSLASHED_STATE;
       default:
         push_char_to_token(token, input[index], &token_index);
         break;
       }
       break;
     case BACKSLASHED_STATE:
-      push_char_to_token(token, input[index], &token_index);
-      quote_state = UNQUOTED_STATE;
+      switch (input[index])
+      {
+      case BACKSLASHES:
+        break;
+      default:
+        push_char_to_token(token, input[index], &token_index);
+        quote_state = UNQUOTED_STATE;
+        break;
+      }
+
     default:
       break;
     }
