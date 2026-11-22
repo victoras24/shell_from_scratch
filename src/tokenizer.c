@@ -67,7 +67,7 @@ char **tokenize(const char *input)
       token = malloc(strlen(input) + 1);
       if (token == NULL)
       {
-        for (size_t i = 0; i < token_index; i++)
+        for (int i = 0; i < token_index; i++)
         {
           free(tokens[i]);
         }

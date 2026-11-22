@@ -1,4 +1,5 @@
 #include "dispatch.h"
+#include "file_descriptor.h"
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,6 +7,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 
 static void builtin_type(char **arguments);
 static void builtin_echo(char **arguments);
@@ -180,16 +182,22 @@ static void execute_path(char **arguments)
 int dispatch(char **arguments)
 {
   char *command = arguments[0];
+  FileDescriptor fd_struct = redirect_command(arguments);
   const struct builtin_command *builtin_command = get_builtin_command(command);
-
   if (builtin_command != NULL)
   {
     builtin_command->function(arguments);
+    fflush(stdout);
+    dup2(fd_struct.stdout_backup_fd, STDOUT_FILENO);
+    close(fd_struct.stdout_backup_fd);
     return builtin_command->is_exit;
   }
   else
   {
     execute_path(arguments);
+    fflush(stdout);
+    dup2(fd_struct.stdout_backup_fd, STDOUT_FILENO);
+    close(fd_struct.stdout_backup_fd);
     return 0;
   }
 };
