@@ -182,7 +182,7 @@ static void execute_path(char **arguments)
 int dispatch(char **arguments)
 {
   char *command = arguments[0];
-  FileDescriptor fd_struct = redirect_command(arguments);
+  FileDescriptor fd_struct = redirect_file_descriptor(arguments);
   const struct builtin_command *builtin_command = get_builtin_command(command);
   if (builtin_command != NULL)
   {

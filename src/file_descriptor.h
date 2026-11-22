@@ -7,6 +7,6 @@ typedef struct
   int stdout_backup_fd;
 } FileDescriptor;
 
-FileDescriptor redirect_command(char **arguments);
+FileDescriptor redirect_file_descriptor(char **arguments);
 
 #endif
