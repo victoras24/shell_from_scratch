@@ -52,3 +52,8 @@ enum fruit
 The best part is that we get a free count of the fruits. Enum values are numbers starting at 0, so if fruit_count is the last item, its value is exactly the number of fruits before it.
 
 snprintf -> let's have a talk about that. i tried to use but didn't understand how is used at the beginning. so it's the same as printf but instead of writing to a stream it writes to a buffer. there was also the sprintf but there was the risk of overflowing, because you are not providing the size of the buffer. with snprintf there is no such problem as you provide the size of the buffer. let's say than the buffer can just take 2 bytes and you provide it with "cat", instead of overflowing the memory, it will truncate the string. snprintf returns a number of the characters that wrote into the buffer, carefull, it does not include the null operator, that was a bit confusing at the beginning. tomorrow, i will try to use it, i'm planning to erase the get_executable_path function and start all over again. i feel that i can think of a better implementation than this one, that was provided by claude. 
+
+I'm on the autocomplete section now. Trying to understand how the terminal works and how is it possible to check each keystroke in order to have autocomplete when TAB is pressed. Searching found that the terminal how two different input processings. The default one is the Canonical Mode and the Non-Canonical mode. The canonical mode is the one that the terminal waits for a newline in order to send the input buffer. On the other hand, non canonical it's the mode where each keystroke get's pushed. 
+
+<img width="802" height="690" alt="image" src="https://github.com/user-attachments/assets/ac39ce4c-ce9c-48a8-a78d-f2598cc11b94" />
+
