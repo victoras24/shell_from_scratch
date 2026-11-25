@@ -2,6 +2,35 @@
 #include <unistd.h>
 #include <stdio.h>
 
+enum action_key
+{
+  ENTER = '\n',
+  BACKSPACE = '\b'
+};
+
+void read_line(char *input, char *buff, int *count)
+{
+  char c;
+  while (read(STDIN_FILENO, &c, 1) == 1)
+  {
+    switch (c)
+    {
+    case ENTER:
+      buff[*count] = '\0';
+      (*count)++;
+      break;
+    case BACKSPACE:
+      buff[*count - 1] = '\0';
+      (*count)--;
+      break;
+    default:
+      buff[*count] = c;
+      (*count)++;
+      break;
+    }
+  }
+}
+
 int main()
 {
   struct termios original_settings;
