@@ -6,20 +6,23 @@
 enum action_key_ascii
 {
   ENTER = 10,
-  BACKSPACE = 127
+  BACKSPACE = 127,
+  CNTRL_D = 4,
 };
 
 static struct termios original_settings;
 static struct termios raw_settings;
 
-void enable_raw_mode()
+void save_original_settings()
 {
   if (tcgetattr(STDIN_FILENO, &original_settings) == -1)
     perror("tcgetattr");
+}
 
+void enable_raw_mode()
+{
   raw_settings = original_settings;
   raw_settings.c_lflag &= ~(ICANON | ECHO);
-
   if (tcsetattr(STDIN_FILENO, TCSANOW, &raw_settings) == -1)
     perror("tcsetattr");
 };
@@ -50,6 +53,10 @@ int line_editor(char *buff, int *count, int size)
       printf("%c", '\b');
       (*count)--;
       break;
+    case CNTRL_D:
+      if (*count == 0)
+        return -1;
+      break;
     default:
       if (*count >= (size - 1))
         break;
@@ -60,5 +67,5 @@ int line_editor(char *buff, int *count, int size)
     }
   }
 
-  return *count;
+  return -1;
 }
