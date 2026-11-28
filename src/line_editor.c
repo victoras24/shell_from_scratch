@@ -1,13 +1,16 @@
 #include <termios.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
 #include "line_editor.h"
+#include "dispatch.h"
 
 enum action_key_ascii
 {
   ENTER = 10,
   BACKSPACE = 127,
   CNTRL_D = 4,
+  TAB = 9
 };
 
 static struct termios original_settings;
@@ -57,6 +60,18 @@ int line_editor(char *buff, int *count, int size)
       if (*count == 0)
         return -1;
       break;
+    case TAB:
+    {
+      const char *command_name = get_autocompleted_command_name(buff, count);
+      int remainder = strlen(command_name) - *count;
+      for (int i = 0; i < remainder; i++, (*count)++)
+      {
+        buff[*count] = command_name[*count];
+        printf("%c", buff[*count]);
+      }
+      printf("%c", ' ');
+      break;
+    }
     default:
       if (*count >= (size - 1))
         break;

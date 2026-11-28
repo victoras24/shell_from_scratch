@@ -30,9 +30,24 @@ static struct builtin_command builtin_commands[] = {
     {"cd", builtin_cd, 0},
 };
 
+static int get_builtin_commands_count()
+{
+  return sizeof(builtin_commands) / sizeof(builtin_commands[0]);
+}
+
+const char *get_autocompleted_command_name(char *input, int *input_len)
+{
+  for (int i = 0; i < get_builtin_commands_count(); i++)
+  {
+    if (strncmp(input, builtin_commands[i].name, *input_len) == 0)
+      return builtin_commands[i].name;
+  }
+  return NULL;
+}
+
 static const struct builtin_command *get_builtin_command(char *command)
 {
-  for (size_t i = 0; i < sizeof(builtin_commands) / sizeof(builtin_commands[0]);
+  for (int i = 0; i < get_builtin_commands_count();
        i++)
   {
     if (strcmp(command, builtin_commands[i].name) == 0)
